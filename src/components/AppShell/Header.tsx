@@ -1,34 +1,21 @@
 import React from 'react';
 import {
   Header as MHeader,
-  MediaQuery,
-  Burger,
   Text,
-  useMantineTheme,
 } from '@mantine/core';
 
-export interface PropTypes {
-  opened: boolean;
-  setOpened: (opened: boolean) => any;
-}
-
-export function Header({ opened, setOpened }: PropTypes) {
-  const theme = useMantineTheme();
+export function Header() {
   return (
-    <MHeader height={70} p="md">
-      <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-        <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-          <Burger
-            opened={opened}
-            onClick={() => setOpened(!opened)}
-            size="sm"
-            color={theme.colors.gray[6]}
-            mr="xl"
-          />
-        </MediaQuery>
+    <MHeader height={70} p="md" sx={({
+      spacing
+    }) => ({
+      display: 'flex',
+      alignItems: 'center',
+      gap: spacing.md,
+    })}>
+      <Text>CSS Polygon Editor</Text>
 
-        <Text>Application header</Text>
-      </div>
+      <Text href="https://github.com/zeropaper/css-polygon-editor" component='a'>Github</Text>
     </MHeader>
   );
 }

@@ -1,15 +1,14 @@
 import React from 'react';
 
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, Paper } from '@mantine/core';
 import AppShell from './components/AppShell/AppShell';
 import Header from './components/AppShell/Header';
 import CSSPolygoneEditor from './components/CSSPolygonEditor/CSSPolygonEditor';
 
 function App() {
-  const [opened, setOpened] = React.useState(false);
   return (
     <MantineProvider>
-      <AppShell header={<Header opened={opened} setOpened={setOpened} />}>
+      <AppShell header={<Header />}>
         <CSSPolygoneEditor />
       </AppShell>
     </MantineProvider>
