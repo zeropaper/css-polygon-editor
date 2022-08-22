@@ -1,0 +1,42 @@
+name: GH pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  update-docs:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: css-polygon-editor
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://npm.pkg.github.com/
+      - uses: actions/cache@v3
+        with:
+          path: ~/css-polygon-editor/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: cd css-polygon-editor && npm ci
+      - run: cd css-polygon-editor && npm run build
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ghpages
+          path: ghpages
+      - run: |
+          cp -rf css-polygon-editor/dist/* ghpages/
+          git config --global user.name "Valentin Vago (CI)"
+          git config --global user.email "65971+zeropaper@users.noreply.github.com"
+          cd ghpages
+          git status
+          git add .
+          git status
+          git commit -m "update GH pages" --allow-empty
+          git status
+          git push origin ghpages
