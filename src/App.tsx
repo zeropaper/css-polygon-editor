@@ -7,7 +7,7 @@ import CSSPolygoneEditor from './components/CSSPolygonEditor/CSSPolygonEditor';
 
 function App() {
   return (
-    <MantineProvider>
+    <MantineProvider withGlobalStyles withNormalizeCSS>
       <AppShell header={<Header />}>
         <CSSPolygoneEditor />
       </AppShell>
