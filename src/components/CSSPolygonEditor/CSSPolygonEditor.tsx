@@ -158,11 +158,13 @@ type PolygonEditorProps = {
 
 export function PolygonEditor({
   coords: coordsProp = [
-    [0, 0],
+    [0, '35%'],
+    ['35%', '35%'],
+    ['35%', 0],
     ['-0', 0],
-    ['-0', '-20px'],
-    ['-20px', '-20px'],
-    ['-20px', '-0'],
+    ['-0', '-40px'],
+    ['-40px', '-40px'],
+    ['-40px', '-0'],
     [0, '-0'],
   ],
   onChange,
