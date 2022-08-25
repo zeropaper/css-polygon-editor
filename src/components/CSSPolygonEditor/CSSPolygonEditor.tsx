@@ -122,11 +122,15 @@ export function PreviewBoxes({
 }) {
   return (
     <Group
-      sx={{
+      spacing="lg"
+      sx={({ fn }) => ({
+        flexDirection: 'column',
+        [fn.smallerThan('md')]: {
+          flexDirection: 'row',
+        },
         background:
           'repeating-conic-gradient(#80808020 0% 25%, transparent 0% 50%) 50% / 20px 20px',
-      }}
-      mb="lg"
+      })}
     >
       <PreviewBox
         highlightedIndex={highlightedIndex}
@@ -249,13 +253,17 @@ export function PolygonEditor({
 
   return (
     <Box
-      sx={{
+      sx={({ spacing, fn }) => ({
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
+        [fn.smallerThan('md')]: {
+          flexDirection: 'column',
+        },
         justifyContent: 'center',
         alignItems: 'center',
-      }}
-      m="xl"
+        gap: spacing.lg
+      })}
+      m="lg"
     >
       <PreviewBoxes coords={coords} highlightedIndex={highlightedIndex} />
 
@@ -270,7 +278,7 @@ export function PolygonEditor({
         onDirectionChange={handleDirectionChange}
       />
 
-      <CodeWithCopyButton m="lg" block>
+      <CodeWithCopyButton block>
         {polygon(coords)}
       </CodeWithCopyButton>
     </Box>
