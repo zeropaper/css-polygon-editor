@@ -4,25 +4,21 @@ import {
   Group,
   Select,
   Text,
-  Code,
   Input as MInput,
   ActionIcon,
   createStyles,
-  CodeProps,
-  Paper,
 } from '@mantine/core';
-import { useClipboard } from '@mantine/hooks';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   IconCopy,
-  IconCheck,
   IconX,
   IconArrowBarToRight,
   IconArrowBarToLeft,
   IconArrowBarToUp,
   IconArrowBarToDown,
 } from '@tabler/icons';
+
+import CodeWithCopyButton from '../CodeWithCopyButton/CodeWithCopyButton';
 
 type XY = [string | number, string | number];
 
@@ -74,56 +70,6 @@ export function CSSUnitSelector({ value, onChange }: CSSUnitSelectorProps) {
       }}
       data={['px', '%', 'em', 'rem', 'ex', 'ch', 'vw', 'vh']}
     />
-  );
-}
-
-export function CodeWithCopyButton({
-  m,
-  mb,
-  ml,
-  mr,
-  mt,
-  mx,
-  my,
-  p,
-  pb,
-  pl,
-  pr,
-  pt,
-  px,
-  py,
-  ...rest
-}: CodeProps & {}) {
-  const clipboard = useClipboard();
-  const code = rest.children?.toString();
-  return (
-    <Paper
-      {...{ m, mb, ml, mr, mt, mx, my, p, pb, pl, pr, pt, px, py }}
-      withBorder
-      sx={{
-        position: 'relative',
-      }}
-    >
-      <ActionIcon
-        sx={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          zIndex: 1,
-        }}
-        title="Copy"
-        onClick={() => clipboard.copy(code)}
-      >
-        {clipboard.copied ? <IconCheck /> : <IconCopy />}
-      </ActionIcon>
-      <Code
-        {...rest}
-        sx={{
-          position: 'relative',
-          zIndex: 0,
-        }}
-      />
-    </Paper>
   );
 }
 
@@ -295,13 +241,13 @@ export function PreviewBox({
   const sizing =
     aspectRatio <= 1
       ? {
-          aspectRatio: `${4 * aspectRatio} / 4`,
-          height: baseSize,
-        }
+        aspectRatio: `${4 * aspectRatio} / 4`,
+        height: baseSize,
+      }
       : {
-          aspectRatio: `4 / ${4 / aspectRatio}`,
-          width: baseSize,
-        };
+        aspectRatio: `4 / ${4 / aspectRatio}`,
+        width: baseSize,
+      };
 
   return (
     <Group
@@ -338,8 +284,7 @@ export function PreviewBox({
         </Text>
       ))}
       <Box
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        sx={({ colorScheme, colors, fn }) => ({
+        sx={({ fn }) => ({
           ...sizing,
           display: 'flex',
           justifyContent: 'center',
@@ -349,24 +294,6 @@ export function PreviewBox({
           background: fn.primaryColor(),
           position: 'relative',
           zIndex: 0,
-          // '&::before,&::after': {
-          //   content: '""',
-          //   position: 'absolute',
-          //   top: 0,
-          //   left: 0,
-          //   width: '100%',
-          //   height: '100%',
-          // },
-          // '&::before': {
-          //   background: fn.primaryColor(),
-          //   clipPath,
-          //   zIndex: -1,
-          // },
-          // '&::after': {
-          //   background: colors.dark[colorScheme === 'dark' ? 6 : 4],
-          //   // clipPath: 'inset(0 0 0 100%)',
-          //   zIndex: -2,
-          // },
         })}
       >
         {sizing.aspectRatio}
