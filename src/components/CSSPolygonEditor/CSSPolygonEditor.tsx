@@ -39,10 +39,12 @@ export function polygon(coords: DetailedCoords) {
 
 export function PreviewBox({
   coords,
+  highlightedIndex,
   aspectRatio,
   baseSize,
 }: {
   coords: DetailedCoords;
+  highlightedIndex: number;
   aspectRatio: number;
   baseSize: number;
 }) {
@@ -63,7 +65,6 @@ export function PreviewBox({
       m="xl"
       spacing="md"
       sx={{
-        border: '1px dotted #000',
         overflow: 'visible',
         position: 'relative',
       }}
@@ -71,7 +72,7 @@ export function PreviewBox({
       {coords.map(([[xAmount, xUnit, xDir], [yAmount, yUnit, yDir]], i) => (
         <Text
           key={`${i}${xAmount}${xUnit}${xDir}${yAmount}${yUnit}${yDir}`}
-          sx={{
+          sx={({ fn }) => ({
             position: 'absolute',
             display: 'flex',
             alignItems: 'center',
@@ -86,8 +87,9 @@ export function PreviewBox({
             top: yDir ? 'unset' : `calc(-1ch + ${yAmount}${yUnit || 'px'})`,
             bottom: yDir ? `calc(-1ch + ${yAmount}${yUnit || 'px'})` : 'unset',
             fontSize: '0.85em',
-            background: 'rgba(255, 255, 255, 0.75)',
-          }}
+            color: highlightedIndex === i ? 'white' : '#000',
+            background: highlightedIndex === i ? fn.primaryColor() : 'white',
+          })}
         >
           {i + 1}
         </Text>
@@ -111,19 +113,38 @@ export function PreviewBox({
   );
 }
 
-export function PreviewBoxes({ coords }: { coords: DetailedCoords }) {
+export function PreviewBoxes({
+  coords,
+  highlightedIndex,
+}: {
+  coords: DetailedCoords;
+  highlightedIndex: number;
+}) {
   return (
     <Group
       sx={{
         background:
           'repeating-conic-gradient(#80808020 0% 25%, transparent 0% 50%) 50% / 20px 20px',
       }}
+      mb="lg"
     >
-      <PreviewBox aspectRatio={0.75} baseSize={200} coords={coords} />
+      <PreviewBox
+        highlightedIndex={highlightedIndex}
+        coords={coords}
+        aspectRatio={0.75} baseSize={200}
+      />
 
-      <PreviewBox aspectRatio={1} baseSize={200} coords={coords} />
+      <PreviewBox
+        highlightedIndex={highlightedIndex}
+        coords={coords}
+        aspectRatio={1} baseSize={200}
+      />
 
-      <PreviewBox aspectRatio={1 / 0.75} baseSize={200} coords={coords} />
+      <PreviewBox
+        highlightedIndex={highlightedIndex}
+        coords={coords}
+        aspectRatio={1 / 0.75} baseSize={200}
+      />
     </Group>
   );
 }
@@ -236,7 +257,7 @@ export function PolygonEditor({
       }}
       m="xl"
     >
-      <PreviewBoxes coords={coords} />
+      <PreviewBoxes coords={coords} highlightedIndex={highlightedIndex} />
 
       <InputsTable
         coords={coords}

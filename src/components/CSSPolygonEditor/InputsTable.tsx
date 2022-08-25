@@ -22,11 +22,13 @@ interface CSSUnitSelectorChangeHandler {
 type CSSUnitSelectorProps = {
   value: number | string;
   onChange: CSSUnitSelectorChangeHandler;
+  onFocus: () => void;
 };
 
-function CSSUnitSelector({ value, onChange }: CSSUnitSelectorProps) {
+function CSSUnitSelector({ value, onChange, onFocus }: CSSUnitSelectorProps) {
   return (
     <Select
+      onFocus={onFocus}
       value={!value ? '%' : value?.toString()}
       onChange={onChange}
       sx={{
@@ -39,8 +41,16 @@ const useInputsTableStyles = createStyles(({ spacing }) => ({
   table: {
     borderCollapse: 'collapse',
   },
+  number: {
+    paddingLeft: spacing.md,
+    paddingRight: spacing.md,
+  },
   direction: {
     paddingRight: spacing.md,
+  },
+  controls: {
+    paddingRight: spacing.md,
+    minWidth: 50 + spacing.md,
   },
   highlighted: {
     backgroundColor: 'lightgrey',
@@ -48,7 +58,15 @@ const useInputsTableStyles = createStyles(({ spacing }) => ({
 }));
 
 function AxisCells({
-  amount, onValueChange, unit, onUnitChange, direction, onDirectionChange, classes, directionIcon,
+  amount,
+  onValueChange,
+  unit,
+  onUnitChange,
+  direction,
+  onDirectionChange,
+  classes,
+  directionIcon,
+  onFocus,
 }: {
   amount: number;
   onValueChange: (value: number) => void;
@@ -60,6 +78,7 @@ function AxisCells({
     direction: string;
   };
   directionIcon: React.ReactNode;
+  onFocus: () => void;
 }) {
   return (
     <>
@@ -71,15 +90,17 @@ function AxisCells({
           name="x"
           type="number"
           value={amount}
+          onFocus={onFocus}
           onChange={(e: { target: { value: string; }; }) => {
             onValueChange(parseInt(e.target.value, 10) || 0);
           }} />
       </td>
       <td>
-        <CSSUnitSelector value={unit} onChange={onUnitChange} />
+        <CSSUnitSelector onFocus={onFocus} value={unit} onChange={onUnitChange} />
       </td>
       <td className={classes.direction}>
         <ActionIcon
+          onFocus={onFocus}
           title={`Side from which the value is measured`}
           variant="outline"
           onClick={() => onDirectionChange(!direction)}
@@ -109,61 +130,67 @@ export function InputsTable({
       <thead>
         <tr>
           <th />
-          <th />
           <th colSpan={3}>X</th>
           <th colSpan={3}>Y</th>
           <th />
         </tr>
       </thead>
       <tbody>
-        {coords.map(([[xAmount, xUnit, xDir], [yAmount, yUnit, yDir]], i) => (
-          <tr
-            key={i}
-            className={cx({
-              [classes.highlighted]: i === highlightedIndex,
-            })}
-            onMouseEnter={() => onHighlight(i)}
-          >
-            <th>{i + 1}</th>
-            <td className={classes.direction}>
-              <ActionIcon
-                variant="outline"
-                title="Remove"
-                onClick={() => onRemove(i)}
-              >
-                <IconX />
-              </ActionIcon>
-            </td>
-            <AxisCells
-              amount={xAmount}
-              onValueChange={(value) => onValueChange(i, 'x', value)}
-              unit={xUnit}
-              onUnitChange={(value) => onUnitChange(i, 'x', value)}
-              direction={xDir}
-              onDirectionChange={(value) => onDirectionChange(i, 'x', value)}
-              classes={classes}
-              directionIcon={xDir ? <IconArrowBarToLeft /> : <IconArrowBarToRight />} />
+        {coords.map(([[xAmount, xUnit, xDir], [yAmount, yUnit, yDir]], i) => {
+          const handleFocus = () => onHighlight(i);
+          return (
+            <tr
+              key={i}
+              className={cx({
+                [classes.highlighted]: i === highlightedIndex,
+              })}
+            >
+              <th className={classes.number}>{i + 1}</th>
+              <AxisCells
+                onFocus={handleFocus}
+                amount={xAmount}
+                onValueChange={(value) => onValueChange(i, 'x', value)}
+                unit={xUnit}
+                onUnitChange={(value) => onUnitChange(i, 'x', value)}
+                direction={xDir}
+                onDirectionChange={(value) => onDirectionChange(i, 'x', value)}
+                classes={classes}
+                directionIcon={xDir ? <IconArrowBarToLeft /> : <IconArrowBarToRight />} />
 
-            <AxisCells
-              amount={yAmount}
-              onValueChange={(value) => onValueChange(i, 'y', value)}
-              unit={yUnit}
-              onUnitChange={(value) => onUnitChange(i, 'y', value)}
-              direction={yDir}
-              onDirectionChange={(value) => onDirectionChange(i, 'y', value)}
-              classes={classes}
-              directionIcon={xDir ? <IconArrowBarToUp /> : <IconArrowBarToDown />} />
-            <td>
-              <ActionIcon
-                variant="outline"
-                title="Copy down"
-                onClick={() => onDuplicate(i)}
-              >
-                <IconCopy />
-              </ActionIcon>
-            </td>
-          </tr>
-        ))}
+              <AxisCells
+                onFocus={handleFocus}
+                amount={yAmount}
+                onValueChange={(value) => onValueChange(i, 'y', value)}
+                unit={yUnit}
+                onUnitChange={(value) => onUnitChange(i, 'y', value)}
+                direction={yDir}
+                onDirectionChange={(value) => onDirectionChange(i, 'y', value)}
+                classes={classes}
+                directionIcon={xDir ? <IconArrowBarToUp /> : <IconArrowBarToDown />} />
+              <td className={classes.controls}>
+                <ActionIcon
+                  sx={{ display: 'inline-flex' }}
+                  onFocus={handleFocus}
+                  variant="subtle"
+                  title="Copy down"
+                  onClick={() => onDuplicate(i)}
+                >
+                  <IconCopy />
+                </ActionIcon>
+
+                <ActionIcon
+                  sx={{ display: 'inline-flex' }}
+                  variant="subtle"
+                  title="Remove"
+                  onFocus={handleFocus}
+                  onClick={() => onRemove(i)}
+                >
+                  <IconX />
+                </ActionIcon>
+              </td>
+            </tr>
+          )
+        })}
       </tbody>
     </table>
   );
